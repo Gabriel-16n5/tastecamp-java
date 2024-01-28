@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tastecamp.api.dtos.RecipeDTO;
 import com.tastecamp.api.models.RecipeModel;
-import com.tastecamp.api.repositories.RecipeRepository;
+import com.tastecamp.api.services.RecipeService;
 
 import jakarta.validation.Valid;
 
@@ -31,20 +31,20 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping("/recipes")
 public class RecipeController {
     
-    final RecipeRepository recipeRepository;
-    RecipeController(RecipeRepository recipeRepository) {
-        this.recipeRepository = recipeRepository;
+    final RecipeService recipeService;
+    RecipeController(RecipeService recipeService) {
+        this.recipeService = recipeService;
     }
 
     @GetMapping    
     public ResponseEntity<List<RecipeModel>> getRecipes() {
-        List<RecipeModel> recipes = recipeRepository.findAll();
+        List<RecipeModel> recipes = recipeService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(recipes);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getRecipeById(@PathVariable Long id) {
-        Optional<RecipeModel> recipe = recipeRepository.findById(id);
+        Optional<RecipeModel> recipe = recipeService.findById(id);
 
         if(!recipe.isPresent()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Id inválido");
@@ -55,27 +55,22 @@ public class RecipeController {
 
     @PostMapping
     public ResponseEntity<RecipeModel> createRecipe(@RequestBody @Valid RecipeDTO body) {
-        RecipeModel receita = new RecipeModel(body);
-        return ResponseEntity.status(HttpStatus.CREATED).body(recipeRepository.save(receita));
+        return ResponseEntity.status(HttpStatus.CREATED).body(recipeService.save(body));
     }
     
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateRecipe(@PathVariable Long id, @RequestBody RecipeDTO body) {
-        Optional<RecipeModel> recipe = recipeRepository.findById(id);
+        Optional<RecipeModel> recipe = recipeService.findById(id);
 
         if(!recipe.isPresent()){
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Não foi possível atualizar");
         }
-        // \/ isso aqui é para o update funcionar e manter o id antigo
-        RecipeModel newRecipe = new RecipeModel(body);
-        newRecipe.setId(id);
-        recipeRepository.save(newRecipe);
-        return ResponseEntity.status(HttpStatus.OK).body(recipeRepository.save(newRecipe));
+        return ResponseEntity.status(HttpStatus.OK).body(recipeService.update(body, id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteRecipe(@PathVariable Long id) {
-        recipeRepository.deleteById(id);
+        recipeService.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Receita deletada");
     }
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 import java.util.Optional;
 
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -54,8 +55,12 @@ public class RecipeController {
     }
 
     @PostMapping
-    public ResponseEntity<RecipeModel> createRecipe(@RequestBody @Valid RecipeDTO body) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(recipeService.save(body));
+    public ResponseEntity<Object> createRecipe(@RequestBody @Valid RecipeDTO body) {
+        Optional<RecipeModel> recipe = recipeService.save(body);
+        if (!recipe.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("essa receita já existe");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(recipe);
     }
     
     @PutMapping("/{id}")
@@ -63,7 +68,7 @@ public class RecipeController {
         Optional<RecipeModel> recipe = recipeService.findById(id);
 
         if(!recipe.isPresent()){
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Não foi possível atualizar");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Não foi possível atualizar");
         }
         return ResponseEntity.status(HttpStatus.OK).body(recipeService.update(body, id));
     }

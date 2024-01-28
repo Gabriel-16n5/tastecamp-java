@@ -1,5 +1,7 @@
 package com.tastecamp.api.models;
 
+import com.tastecamp.api.dtos.RecipeDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +18,12 @@ import lombok.NoArgsConstructor;
 @Entity// transformei esse modelo em uma table de banco
 @Table(name = "recipes")// dei o nome para essa table
 public class RecipeModel {
+
+    public RecipeModel(RecipeDTO dto) {
+        this.title = dto.getTitle();
+        this.ingredients = dto.getIngredients();
+        this.steps = dto.getSteps();
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)// primary sequencial

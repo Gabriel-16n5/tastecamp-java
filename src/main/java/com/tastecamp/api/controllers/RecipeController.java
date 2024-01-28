@@ -1,7 +1,15 @@
 package com.tastecamp.api.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
+
+import com.tastecamp.api.models.RecipeModel;
+import com.tastecamp.api.repositories.RecipeRepository;
+
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,14 +25,26 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 @RequestMapping("/recipes")
 public class RecipeController {
+    
+    final RecipeRepository recipeRepository;
+    RecipeController(RecipeRepository recipeRepository) {
+        this.recipeRepository = recipeRepository;
+    }
+
     @GetMapping    
-    public String getRecipes() {
-        return "lista de receitas";
+    public List<RecipeModel> getRecipes() {
+        return recipeRepository.findAll();
     }
 
     @GetMapping("/{id}")
-    public String getRecipeById(@PathVariable Long id) {
-        return "Essa é a receita de id " + id;
+    public Optional<RecipeModel> getRecipeById(@PathVariable Long id) {
+        Optional<RecipeModel> recipe = recipeRepository.findById(id);
+
+        if(recipe.isPresent()){
+            return Optional.empty();
+        }
+
+        return recipe;
     }
 
     @PostMapping

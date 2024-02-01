@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +25,15 @@ public class RecipeModel {
         this.title = dto.getTitle();
         this.ingredients = dto.getIngredients();
         this.steps = dto.getSteps();
+        this.author = new UserModel();
+        this.author.setId(dto.getAuthorId());
+    }
+
+    public RecipeModel(RecipeDTO dto, UserModel user) {
+        this.title = dto.getTitle();
+        this.ingredients = dto.getIngredients();
+        this.steps = dto.getSteps();
+        this.author = user;
     }
 
     @Id
@@ -38,4 +49,7 @@ public class RecipeModel {
     @Column(length = 150, nullable = false)
     private String steps;
 
+    @ManyToOne
+    @JoinColumn(name = "authorId")
+    private UserModel author;
 }

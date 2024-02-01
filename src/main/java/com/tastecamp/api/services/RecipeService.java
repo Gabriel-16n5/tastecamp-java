@@ -7,14 +7,19 @@ import org.springframework.stereotype.Service;
 
 import com.tastecamp.api.dtos.RecipeDTO;
 import com.tastecamp.api.models.RecipeModel;
+import com.tastecamp.api.models.UserModel;
 import com.tastecamp.api.repositories.RecipeRepository;
+import com.tastecamp.api.repositories.UserRepository;
 
 @Service
 public class RecipeService {
     
     final RecipeRepository recipeRepository;
-    RecipeService(RecipeRepository recipeRepository) {
+    final UserRepository userRepository;
+
+    RecipeService(RecipeRepository recipeRepository, UserRepository userRepository) {
         this.recipeRepository = recipeRepository;
+        this.userRepository = userRepository;
     }
 
     public List<RecipeModel> findAll() {
@@ -30,7 +35,13 @@ public class RecipeService {
             return Optional.empty();
         }
 
-        RecipeModel receita = new RecipeModel(dto);
+        Optional<UserModel> user = userRepository.findById(dto.getAuthorId());
+
+        if(!user.isPresent()) {
+            return Optional.empty();
+        }
+
+        RecipeModel receita = new RecipeModel(dto, user.get());
         return Optional.of(recipeRepository.save(receita));
     }
 

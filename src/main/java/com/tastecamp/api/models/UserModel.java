@@ -1,5 +1,7 @@
 package com.tastecamp.api.models;
 
+import com.tastecamp.api.dtos.UserDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +19,11 @@ import lombok.NoArgsConstructor;
 @Table(name = "users")
 public class UserModel {
     
+    public UserModel(UserDTO dto) {
+        this.username = dto.getUsername();
+        this.email = dto.getEmail();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;

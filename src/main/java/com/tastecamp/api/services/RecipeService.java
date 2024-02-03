@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.tastecamp.api.dtos.RecipeDTO;
+import com.tastecamp.api.exceptions.RecipeTitleConflictException;
+import com.tastecamp.api.exceptions.UserNotFoundException;
 import com.tastecamp.api.models.CategoryModel;
 import com.tastecamp.api.models.RecipeModel;
 import com.tastecamp.api.models.UserModel;
@@ -34,21 +36,18 @@ public class RecipeService {
         return recipeRepository.findById(id);
     }
 
-    public Optional<RecipeModel> save(RecipeDTO dto) {
+    public RecipeModel save(RecipeDTO dto) {
         if(recipeRepository.existsByTitle(dto.getTitle())){
-            return Optional.empty();
+            throw new RecipeTitleConflictException("this message aready exists");
         }
 
-        Optional<UserModel> user = userRepository.findById(dto.getAuthorId());
+        UserModel user = userRepository.findById(dto.getAuthorId()).orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if(!user.isPresent()) {
-            return Optional.empty();
-        }
 
         List<CategoryModel> categories = categoryRepository.findAllById(dto.getCategoryIds());
 
-        RecipeModel receita = new RecipeModel(dto, user.get(), categories);
-        return Optional.of(recipeRepository.save(receita));
+        RecipeModel receita = new RecipeModel(dto, user, categories);
+        return recipeRepository.save(receita);
     }
 
     public RecipeModel update(RecipeDTO dto, Long id) {

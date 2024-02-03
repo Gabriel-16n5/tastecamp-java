@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.tastecamp.api.dtos.RecipeDTO;
+import com.tastecamp.api.exceptions.RecipeNotFoundException;
 import com.tastecamp.api.exceptions.RecipeTitleConflictException;
 import com.tastecamp.api.exceptions.UserNotFoundException;
 import com.tastecamp.api.models.CategoryModel;
@@ -32,8 +33,8 @@ public class RecipeService {
         return recipeRepository.findAll();
     }
 
-    public Optional<RecipeModel> findById(Long id) {
-        return recipeRepository.findById(id);
+    public RecipeModel findById(Long id) {
+        return recipeRepository.findById(id).orElseThrow(() -> new RecipeNotFoundException("Recipe not found"));
     }
 
     public RecipeModel save(RecipeDTO dto) {
@@ -51,6 +52,7 @@ public class RecipeService {
     }
 
     public RecipeModel update(RecipeDTO dto, Long id) {
+        this.findById(id);
         RecipeModel newRecipe = new RecipeModel(dto);
         newRecipe.setId(id);
         return recipeRepository.save(newRecipe);

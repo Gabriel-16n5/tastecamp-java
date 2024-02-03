@@ -16,7 +16,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({RecipeTitleConflictException.class})
     public ResponseEntity<Object> handlerRecipeTitleConflict(RecipeTitleConflictException exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
+}
 
+    @ExceptionHandler({RecipeNotFoundException.class})
+    public ResponseEntity<Object> handlerRecipeTitleConflict(RecipeNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 }
 
 }

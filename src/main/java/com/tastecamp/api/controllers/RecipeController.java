@@ -45,12 +45,7 @@ public class RecipeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getRecipeById(@PathVariable Long id) {
-        Optional<RecipeModel> recipe = recipeService.findById(id);
-
-        if(!recipe.isPresent()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Id inválido");
-        }
-
+        RecipeModel recipe = recipeService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(recipe);
     }
 
@@ -62,11 +57,6 @@ public class RecipeController {
     
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateRecipe(@PathVariable Long id, @RequestBody RecipeDTO body) {
-        Optional<RecipeModel> recipe = recipeService.findById(id);
-
-        if(!recipe.isPresent()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Não foi possível atualizar");
-        }
         return ResponseEntity.status(HttpStatus.OK).body(recipeService.update(body, id));
     }
 

@@ -9,17 +9,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
     
     @ExceptionHandler({UserNotFoundException.class})
-    public ResponseEntity<Object> handleUserNotFound(UserNotFoundException exception) {
+    public ResponseEntity<String> handleUserNotFound(UserNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
     }
 
     @ExceptionHandler({RecipeTitleConflictException.class})
-    public ResponseEntity<Object> handlerRecipeTitleConflict(RecipeTitleConflictException exception) {
+    public ResponseEntity<String> handlerRecipeTitleConflict(RecipeTitleConflictException exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
 }
 
     @ExceptionHandler({RecipeNotFoundException.class})
-    public ResponseEntity<Object> handlerRecipeTitleConflict(RecipeNotFoundException exception) {
+    public ResponseEntity<String> handlerRecipeTitleConflict(RecipeNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 }
 
